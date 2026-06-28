@@ -11,6 +11,8 @@ import Contact from './Pages/Contact'
 import Login from './Pages/Login'
 import Reviews from './Pages/Reviews'
 import Wishlist from './Pages/Wishlist'
+import Register from './Pages/Registration'
+import NotFound from './Pages/NotFound' // ✅ Added
 
 function App() {
   return (
@@ -25,8 +27,10 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/reviews' element={<Reviews />} />
           <Route path='/wishlist' element={<Wishlist />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='*' element={<NotFound />} /> {/* ✅ Catches ALL unknown URLs */}
         </Routes>
-        <Footer />
+        
       </BrowserRouter>
     </>
   )

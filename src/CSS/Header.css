@@ -292,3 +292,21 @@ ul{
     width: 70px;
     height: 70px;
 }
+
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  z-index: 2;
+  width: 90%;
+  /* ⬇️ Add a transition for opacity ⬇️ */
+  transition: opacity 0.5s ease-in-out; 
+}
+
+/* ⬇️ Class to apply when hidden ⬇️ */
+.hero-content-hidden {
+  opacity: 0;
+  pointer-events: none; /* Prevents clicking links when hidden */
+}

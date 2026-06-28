@@ -4,22 +4,25 @@ import '../CSS/Header.css'
 import logovideo from '../Images/Scene.mp4'
 import loginimg from '../Images/login.png'
 import HFlogo from '../Images/HeaderFooterMainLogo.png'
-// ✅ HeroVideo import REMOVED — video now comes from each page as a prop
 
-// ✅ Header now accepts: videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink
-const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink }) => {
+// ✅ Header now accepts BOTH videoSrc (local video) OR imageSrc (online image URL)
+const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink, hideHero }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isTextVisible, setIsTextVisible] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 90) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 90);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTextVisible(false);
+    }, 8000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -36,7 +39,7 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
             width: 100%;
             height: 75vh;
             overflow: hidden;
-            background-color: #000;
+            background-color: #000; 
           }
 
           .hero-video {
@@ -46,13 +49,21 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
             object-fit: cover;
           }
 
+          /* ✅ Same styling for image as video */
+          .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(40%);
+          }
+          
           .hero-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.4); 
             z-index: 1;
           }
 
@@ -69,7 +80,7 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
           .transparent-nav {
             background-color: transparent !important;
             position: absolute;
-            top: 0;
+            top: 0; 
             left: 0;
             width: 100%;
             z-index: 10;
@@ -105,20 +116,21 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
         `}
       </style>
 
-      {/* ── Top White Bar ── */}
+      {/* Top Bar Section */}
       <div className="container-fluid navbar navbar-expand-lg navbar-light mb-0 pb-0 bg-white">
         <div className="container-fluid">
           <Link to="/" className="navbar-brand p-0">
             <div style={{ width: '400px', height: '80px', overflow: 'hidden', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
               <video autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.25)' }}>
                 <source src={logovideo} type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
             </div>
           </Link>
 
           <ul className="navbar-nav me-5">
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" aria-current="page" href="#">
                 <i className="fa-solid fa-phone logos1"></i>{' '}
                 <i className="fa-brands fa-whatsapp logos"></i>
                 <span className="number fw-bold"> +91 8942 00 8221</span>
@@ -132,27 +144,25 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
             </li>
             <li>
               <Link className='header-links' to="/login">
-                <img className='login-img' src={loginimg} alt="login" />
+                <img className='login-img' src={loginimg} alt="" />
               </Link>
             </li>
             <li>
-              <a className='custom-tooltip-link' data-tooltip="Admin" href="">
+              <Link className='custom-tooltip-link' data-tooltip="Admin" to="/admin">
                 <i className="fa-solid me-1 ms-4 fa-circle-user"></i>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* ── Hero + Transparent Nav Wrapper ── */}
-      <div className="hero-wrapper">
-
-        {/* Transparent nav sits ON TOP of the video */}
+      {/* The Unified Hero & Nav Wrapper — hidden when hideHero=true */}
+      {!hideHero && <div className="hero-wrapper">
         <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}>
           <div>
-            <Link to="/">
+            <a href="">
               <img className='Navlogo' style={{ height: '60px', width: 'auto', objectFit: 'contain' }} src={HFlogo} alt="NavLogo" />
-            </Link>
+            </a>
           </div>
           <ul className='nav-list mb-0 d-flex align-items-center'>
             <li><Link className='header-links' to="/">Home</Link></li>
@@ -175,27 +185,32 @@ const Header = ({ videoSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink })
           </ul>
         </nav>
 
-        {/* ── Hero Video Section ── */}
+        {/* Hero Section */}
         <section className="hero-container">
-          {/* ✅ key={videoSrc} forces React to reload video when page changes */}
-          <video autoPlay loop muted playsInline className="hero-video" key={videoSrc}>
-            <source src={videoSrc} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+
+          {/* ✅ If imageSrc is given → show image. If videoSrc is given → show video */}
+          {imageSrc ? (
+            <img src={imageSrc} alt="Hero" className="hero-image" />
+          ) : (
+            <video autoPlay loop muted playsInline className="hero-video" key={videoSrc}>
+              <source src={videoSrc} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
 
           <div className="hero-overlay"></div>
 
-          {/* ✅ Title, subtitle, button all come from each page as props */}
-          <div className="hero-content text-center">
-            <h1 className="hero-title">{heroTitle}</h1>
-            <p className="hero-subtitle">{heroSubtitle}</p>
-            <Link to={heroBtnLink} className="btn text-white custom-hero-btn mt-3">
-              {heroBtnText}
-            </Link>
+          <div className={`hero-content text-center ${!isTextVisible ? 'hero-content-hidden' : ''}`}>
+            <h1 className="hero-title fw-bold">{heroTitle}</h1>
+            <p className="hero-subtitle fw-bold">{heroSubtitle}</p>
+            {heroBtnText && (
+              <Link to={heroBtnLink} className="btn text-white custom-hero-btn mt-3">
+                {heroBtnText}
+              </Link>
+            )}
           </div>
         </section>
-
-      </div>
+      </div>}
     </>
   )
 }
