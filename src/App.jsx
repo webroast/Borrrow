@@ -11,13 +11,14 @@ import Contact from './Pages/Contact'
 import Login from './Pages/Login'
 import Reviews from './Pages/Reviews'
 import Wishlist from './Pages/Wishlist'
-import Register from './Pages/Registration'
-import NotFound from './Pages/NotFound' // ✅ Added
+import Register from './Pages/Register' 
+import NotFound from './Pages/NotFound' 
 
 function App() {
   return (
     <>
-      <BrowserRouter>
+      {/* ⚠️ CHANGED: Removed the duplicate "/Borrow" here so Vite and React Router don't clash */}
+      <BrowserRouter basename="/">
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
@@ -28,9 +29,8 @@ function App() {
           <Route path='/reviews' element={<Reviews />} />
           <Route path='/wishlist' element={<Wishlist />} />
           <Route path='/register' element={<Register />} />
-          <Route path='*' element={<NotFound />} /> {/* ✅ Catches ALL unknown URLs */}
+          <Route path='*' element={<NotFound />} /> 
         </Routes>
-        
       </BrowserRouter>
     </>
   )

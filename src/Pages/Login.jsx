@@ -188,7 +188,7 @@ const Login = () => {
                 </div>
 
                 <label className="text-light fs-small form-register-label fw-semibold text-center d-block" htmlFor="rememberMe">
-                  If You Do Not Have Account <a href="/register">Register Here</a>
+                  If You Do Not Have Account <Link to="/register">Register Here</Link>
                 </label>
 
                 <div className="text-center">

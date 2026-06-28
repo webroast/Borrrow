@@ -5,15 +5,15 @@ import logovideo from '../Images/Scene.mp4'
 import loginimg from '../Images/login.png'
 import HFlogo from '../Images/HeaderFooterMainLogo.png'
 
-// ✅ Header now accepts BOTH videoSrc (local video) OR imageSrc (online image URL)
 const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, heroBtnLink, hideHero }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(window.scrollY > 90);
   const [isTextVisible, setIsTextVisible] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 90);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -33,7 +33,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             position: relative;
             width: 100%;
           }
-
           .hero-container {
             position: relative;
             width: 100%;
@@ -41,22 +40,18 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             overflow: hidden;
             background-color: #000; 
           }
-
           .hero-video {
             width: 100%;
             height: 100%;
             filter: grayscale(40%);
             object-fit: cover;
           }
-
-          /* ✅ Same styling for image as video */
           .hero-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             filter: grayscale(40%);
           }
-          
           .hero-overlay {
             position: absolute;
             top: 0;
@@ -66,7 +61,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             background: rgba(0, 0, 0, 0.4); 
             z-index: 1;
           }
-
           .hero-content {
             position: absolute;
             top: 50%;
@@ -76,7 +70,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             z-index: 2;
             width: 90%;
           }
-
           .transparent-nav {
             background-color: transparent !important;
             position: absolute;
@@ -88,16 +81,13 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             padding-top: 15px;
             padding-bottom: 15px;
           }
-
           .transparent-nav .header-links {
             color: #ffffff !important;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
           }
-
           .transparent-nav .header-links i {
             color: #ffffff !important;
           }
-
           .solid-sticky-nav {
             position: fixed;
             top: 0;
@@ -108,7 +98,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             transition: all 0.3s ease;
             animation: slideDown 0.3s ease-in-out;
           }
-
           @keyframes slideDown {
             from { transform: translateY(-100%); }
             to { transform: translateY(0); }
@@ -142,12 +131,12 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
                 <span className="insta-id fw-bold"> justborrrowit</span>
               </a>
             </li>
-            <li>
+            <li className="d-flex align-items-center">
               <Link className='header-links' to="/login">
-                <img className='login-img' src={loginimg} alt="" />
+                <img className='login-img' src={loginimg} alt="Login" />
               </Link>
             </li>
-            <li>
+            <li className="d-flex align-items-center">
               <Link className='custom-tooltip-link' data-tooltip="Admin" to="/admin">
                 <i className="fa-solid me-1 ms-4 fa-circle-user"></i>
               </Link>
@@ -156,13 +145,13 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
         </div>
       </div>
 
-      {/* The Unified Hero & Nav Wrapper — hidden when hideHero=true */}
+      {/* Unified Hero & Nav Wrapper */}
       {!hideHero && <div className="hero-wrapper">
         <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}>
           <div>
-            <a href="">
+            <Link to="/">
               <img className='Navlogo' style={{ height: '60px', width: 'auto', objectFit: 'contain' }} src={HFlogo} alt="NavLogo" />
-            </a>
+            </Link>
           </div>
           <ul className='nav-list mb-0 d-flex align-items-center'>
             <li><Link className='header-links' to="/">Home</Link></li>
@@ -187,8 +176,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
 
         {/* Hero Section */}
         <section className="hero-container">
-
-          {/* ✅ If imageSrc is given → show image. If videoSrc is given → show video */}
           {imageSrc ? (
             <img src={imageSrc} alt="Hero" className="hero-image" />
           ) : (
@@ -202,7 +189,7 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
 
           <div className={`hero-content text-center ${!isTextVisible ? 'hero-content-hidden' : ''}`}>
             <h1 className="hero-title fw-bold">{heroTitle}</h1>
-            <p className="hero-subtitle fw-bold">{heroSubtitle}</p>
+            <h4 className="hero-subtitle fw-bold">{heroSubtitle}</h4>
             {heroBtnText && (
               <Link to={heroBtnLink} className="btn text-white custom-hero-btn mt-3">
                 {heroBtnText}

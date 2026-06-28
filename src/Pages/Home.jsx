@@ -4,19 +4,14 @@ import Header from '../Component/Header'
 import Footer from '../Component/Footer'
 import heroVideo from '../Images/HeroVideo.mp4'
 
-// Import JSON Data Files
 import cardsData from '../Images/CardData.json'
 import initialItemsData from '../Images/itemsData.json'
 
 const Home = () => {
-  // Newsletter States
   const [emailInput, setEmailInput] = useState('');
   const [showToast, setShowToast] = useState(false);
-
-  // Load trending items into state to make them fully mutable
   const [items, setItems] = useState(initialItemsData);
 
-  // Mutable logic function for toggling Wishlist state
   const toggleWishlist = (id) => {
     setItems(prevItems =>
       prevItems.map(item =>
@@ -25,7 +20,6 @@ const Home = () => {
     );
   };
 
-  // Newsletter Submit Logic Handler
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
     if (emailInput.trim() !== '') {
@@ -41,22 +35,18 @@ const Home = () => {
     <>
       <style>
         {`
-          /* --- GENERAL SECTIONS DESIGN --- */
           .card-section, .trending-section {
             padding: 80px 0;
             background-color: #f8f9fa; 
           }
-
           .category-header {
             margin-bottom: 40px;
           }
-
           .section-main-title {
             color: #212529;
             font-size: 2.25rem;
             letter-spacing: 0.5px;
           }
-
           .category-underline, .steps-underline, .trending-underline, .trust-underline, .news-underline {
             width: 60px;
             height: 4px;
@@ -64,14 +54,11 @@ const Home = () => {
             margin: 12px auto 0 auto;
             border-radius: 2px;
           }
-
           .steps-subtitle {
             color: #6c757d;
             font-size: 1.1rem;
             margin-top: 15px;
           }
-
-          /* --- CATEGORY OVERLAY CARDS --- */
           .custom-card {
             border: none;
             border-radius: 12px;
@@ -81,23 +68,19 @@ const Home = () => {
             height: 250px; 
             cursor: pointer;
           }
-
           .card-img-wrapper {
             width: 100%;
             height: 100%;
           }
-
           .card-img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease;
           }
-
           .custom-card:hover .card-img-wrapper img {
             transform: scale(1.05);
           }
-
           .card-text-overlay {
             position: absolute;
             top: 0;
@@ -112,35 +95,28 @@ const Home = () => {
             z-index: 2;
             padding: 15px;
           }
-
           .card-overlay-title {
             color: #ffffff;
             font-size: 1.25rem;
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
             margin: 0;
           }
-
           .custom-card:hover .card-text-overlay {
             opacity: 0;
             background-color: transparent;
           }
-
-          /* --- HOW IT WORKS SECTION --- */
           .how-it-works-section {
             padding: 80px 0;
             background-color: #ffffff; 
           }
-
           .step-box {
             padding: 30px 20px;
             text-align: center;
             transition: transform 0.3s ease;
           }
-
           .step-box:hover {
             transform: translateY(-5px);
           }
-
           .step-icon-wrapper {
             width: 80px;
             height: 80px;
@@ -154,7 +130,6 @@ const Home = () => {
             font-size: 2rem;
             position: relative;
           }
-
           .step-badge {
             position: absolute;
             top: -5px;
@@ -171,20 +146,16 @@ const Home = () => {
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
           }
-
           .step-title {
             font-size: 1.4rem;
             color: #212529;
             margin-bottom: 12px;
           }
-
           .step-desc {
             color: #6c757d;
             font-size: 0.95rem;
             line-height: 1.6;
           }
-
-          /* --- TRENDING PRODUCTS CARDS --- */
           .trending-item-card {
             border: none;
             border-radius: 12px;
@@ -193,12 +164,10 @@ const Home = () => {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
-
           .trending-item-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
           }
-
           .wishlist-btn {
             position: absolute;
             top: 15px;
@@ -215,13 +184,10 @@ const Home = () => {
             z-index: 10;
             transition: transform 0.2s ease;
           }
-
-          /* --- WHY CHOOSE US TRUST SECTION --- */
           .trust-section {
             padding: 80px 0;
             background-color: #ffffff; 
           }
-
           .trust-card {
             background-color: #ffffff;
             border: 1px solid #eef2f5;
@@ -229,38 +195,31 @@ const Home = () => {
             padding: 35px 25px;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
           }
-
           .trust-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             border-color: rgba(13, 110, 253, 0.2);
           }
-
           .trust-icon-box {
             font-size: 2.25rem;
             color: #0d6efd;
             margin-bottom: 20px;
           }
-
           .trust-card-title {
             font-size: 1.25rem;
             color: #212529;
             margin-bottom: 12px;
           }
-
           .trust-card-desc {
             color: #6c757d;
             font-size: 0.92rem;
             line-height: 1.6;
             margin: 0;
           }
-
-          /* --- BECOME A LENDER SECTION --- */
           .lender-cta-section {
             padding: 80px 0 40px 0;
             background-color: #f8f9fa; 
           }
-
           .lender-banner-box {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border-radius: 20px;
@@ -268,12 +227,10 @@ const Home = () => {
             color: #ffffff;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
           }
-
           .lender-heading {
             font-size: 2.5rem;
             letter-spacing: 0.5px;
           }
-
           .lender-description {
             color: #cbd5e1;
             font-size: 1.1rem;
@@ -281,7 +238,6 @@ const Home = () => {
             margin: 0 auto 30px auto;
             line-height: 1.7;
           }
-
           .lender-signup-btn {
             background-color: #0d6efd;
             color: #ffffff;
@@ -294,19 +250,15 @@ const Home = () => {
             display: inline-block;
             box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
           }
-
           .lender-signup-btn:hover {
             background-color: #0b5ed7;
             color: #ffffff;
             transform: translateY(-2px);
           }
-
-          /* --- NEWSLETTER SECTION --- */
           .newsletter-section {
             padding: 60px 0 80px 0;
             background-color: #f8f9fa;
           }
-
           .newsletter-input-group {
             max-width: 550px;
             margin: 0 auto;
@@ -315,7 +267,6 @@ const Home = () => {
             border-radius: 50px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
           }
-
           .newsletter-input {
             border: none;
             padding: 12px 25px;
@@ -324,7 +275,6 @@ const Home = () => {
             outline: none;
             width: 70%;
           }
-
           .newsletter-submit-btn {
             background-color: #212529;
             color: #ffffff;
@@ -335,12 +285,9 @@ const Home = () => {
             transition: background-color 0.3s ease;
             width: 30%;
           }
-
           .newsletter-submit-btn:hover {
             background-color: #000000;
           }
-
-          /* --- SUCCESS TOAST --- */
           .custom-success-toast {
             position: fixed;
             bottom: 30px;
@@ -358,7 +305,6 @@ const Home = () => {
             align-items: center;
             gap: 10px;
           }
-
           @keyframes popUpFade {
             from { bottom: 0px; opacity: 0; transform: translate(-50%, 20px); }
             to { bottom: 30px; opacity: 1; transform: translate(-50%, 0); }
@@ -366,10 +312,9 @@ const Home = () => {
         `}
       </style>
 
-      {/* ✅ Header with Home video */}
+      {/* ✅ Header — no basename needed in videoSrc, router handles it */}
       <Header videoSrc={heroVideo} />
 
-      {/* Toast Notification */}
       {showToast && (
         <div className="custom-success-toast">
           <i className="fa-solid fa-circle-check"></i>
@@ -377,7 +322,6 @@ const Home = () => {
         </div>
       )}
 
-      {/* 8 Category Overlay Cards Grid Block */}
       <section className="card-section">
         <div className="container">
           <div className="row">
@@ -403,7 +347,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3-Step How It Works Section */}
       <section className="how-it-works-section">
         <div className="container">
           <div className="row mb-5">
@@ -448,7 +391,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 6 Mutable Rental Items Display Section */}
       <section className="trending-section">
         <div className="container">
           <div className="row mb-5">
@@ -487,7 +429,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Trust Section */}
       <section className="trust-section">
         <div className="container">
           <div className="row mb-5">
@@ -529,7 +470,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Become a Lender CTA Section */}
       <section className="lender-cta-section">
         <div className="container text-center">
           <div className="lender-banner-box">
@@ -542,7 +482,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Newsletter Stay Updated Section */}
       <section className="newsletter-section">
         <div className="container">
           <div className="row mb-4">

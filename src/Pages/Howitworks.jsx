@@ -145,12 +145,24 @@ const Howitworks = () => {
       {/* 3. Hourly vs Daily Price Clarity Block */}
       <section className="py-5 bg-white">
         <div className="container">
-          <div className="pricing-notice-box shadow-sm d-flex align-items-start gap-3">
+          {/* Rate Notice Box (Added mb-4 to separate the two boxes nicely) */}
+          <div className="pricing-notice-box shadow-sm d-flex align-items-start gap-3 mb-4">
             <i className="fa-solid fa-circle-info fs-4 mt-1"></i>
             <div>
               <h5 className="fw-bold mb-1">Important Note About Rental Rates</h5>
               <p className="mb-0">
                 To keep sharing fair and practical, <strong>rates for hourly durations and full-day durations will be completely different</strong>. Lenders optimize pricing templates relative to active time frames, allowing you to access premium gear at lower costs if you only need it for brief projects!
+              </p>
+            </div>
+          </div>
+
+          {/* 👇 NEW CODE: Late Return Warning Notice Box */}
+          <div className="pricing-notice-box shadow-sm d-flex align-items-start gap-3">
+            <i className="fa-solid fa-triangle-exclamation fs-4 mt-1"></i>
+            <div>
+              <h5 className="fw-bold mb-1">Important Note About Late Returns</h5>
+              <p className="mb-0">
+                Please ensure you plan your rental period carefully! <strong>Returning the product not on time will lead to extra charges</strong>. Late returns impact other platform members who may have booked the item right after you.
               </p>
             </div>
           </div>
@@ -166,9 +178,9 @@ const Howitworks = () => {
             Get Started Today
           </Link>
         </div>
-      </section>
+      </section><hr className='m-0'></hr>
 
-    <Footer />
+      <Footer />
     </>
   )
 }
