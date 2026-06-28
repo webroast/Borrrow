@@ -310,3 +310,89 @@ ul{
   opacity: 0;
   pointer-events: none; /* Prevents clicking links when hidden */
 }
+
+
+
+/* --------------------------------------------------------------------------------------------- */
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+
+  /* Hide desktop nav links */
+  .nav-list {
+    display: none !important;
+  }
+
+  /* Show hamburger button */
+  .hamburger-btn {
+    display: block !important;
+  }
+
+  /* Top bar — everything in one row */
+  .topbar-inner {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    padding: 5px 10px !important;
+  }
+
+  /* Shrink logo video */
+  .topbar-logo-video {
+    width: 120px !important;
+    height: 40px !important;
+  }
+
+  /* Icons all in one row */
+  .topbar-nav-items {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  /* Hide text, show only icons */
+  .number {
+    display: none !important;
+  }
+
+  .insta-id {
+    display: none !important;
+  }
+
+  /* Smaller login image */
+  .login-img {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  /* Smaller admin icon */
+  .fa-circle-user {
+    font-size: 20px !important;
+    margin: 0 !important;
+  }
+
+  /* Hero height smaller */
+  .hero-container {
+    height: 50vh !important;
+  }
+
+  .hero-title {
+    font-size: 1.5rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem !important;
+  }
+
+  /* Nav logo smaller */
+  .Navlogo {
+    height: 40px !important;
+    width: auto !important;
+    margin-left: 10px !important;
+    transform: scale(1) !important;
+  }
+}
+/* -------------------------------------------------------------------------------------------------- */
