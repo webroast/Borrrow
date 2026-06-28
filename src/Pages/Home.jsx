@@ -22,6 +22,10 @@ const Home = ({ isLoggedIn, wishlist, toggleWishlist }) => {
   // null means no card is expanded
   const [expandedCard, setExpandedCard] = useState(null);
 
+  // ── LOGIN PROMPT MODAL State ────────────────────────────────
+  // Instead of alert(), we show a custom modal with Login + Cancel buttons
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
   // ── FEATURE 4: Borrow Modal State ──────────────────────────
   // showBorrowModal: true/false — controls if the date/time form is visible
   const [showBorrowModal, setShowBorrowModal] = useState(false);
@@ -45,15 +49,14 @@ const Home = ({ isLoggedIn, wishlist, toggleWishlist }) => {
   // ── Handler: "Borrow Now" button clicked ───────────────────
   const handleBorrowClick = (item) => {
     if (!isLoggedIn) {
-      // FEATURE 3: Not logged in → show alert with login/register message
-      alert('Please login or register first!\n\nYou can also Register with Google for quick access.');
-      navigate('/login'); // Redirect them to login page
+      // Show custom login prompt modal instead of browser alert
+      setShowLoginPrompt(true);
       return;
     }
     // Logged in → show the date/time modal
     setBorrowItem(item);
     setShowBorrowModal(true);
-    setShowSuccess(false); // Reset success message from any previous booking
+    setShowSuccess(false);
     setBorrowDate('');
     setBorrowTime('');
   };
@@ -63,9 +66,8 @@ const Home = ({ isLoggedIn, wishlist, toggleWishlist }) => {
     e.stopPropagation(); // Prevent the card from toggling when heart is clicked
 
     if (!isLoggedIn) {
-      // FEATURE 3: Not logged in → show alert
-      alert('Please login or register first!\n\nYou can also Register with Google for quick access.');
-      navigate('/login');
+      // Show custom login prompt modal instead of browser alert
+      setShowLoginPrompt(true);
       return;
     }
     // FEATURE 5: Logged in → toggle the item in/out of wishlist
@@ -403,6 +405,40 @@ const Home = ({ isLoggedIn, wishlist, toggleWishlist }) => {
             from { bottom: 0px; opacity: 0; transform: translate(-50%, 20px); }
             to { bottom: 30px; opacity: 1; transform: translate(-50%, 0); }
           }
+          /* ── Login Prompt Modal ── */
+          .login-prompt-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .login-prompt-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px 30px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            text-align: center;
+          }
+          .login-prompt-icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+          }
+          .login-prompt-box h5 {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+          }
+          .login-prompt-box p {
+            color: #64748b;
+            font-size: 0.92rem;
+            margin-bottom: 22px;
+          }
           /* ── Borrow Modal overlay ── */
           .borrow-modal-overlay {
             position: fixed;
@@ -470,9 +506,40 @@ const Home = ({ isLoggedIn, wishlist, toggleWishlist }) => {
         </div>
       )}
 
-      {/* ── FEATURE 4: Borrow Date/Time Modal ────────────────────────────
-           Shown when a logged-in user clicks "Borrow Now" on any card.
+      {/* ── LOGIN PROMPT MODAL ────────────────────────────────────
+           Shows when a not-logged-in user clicks Heart or Borrow Now.
+           Has two buttons: "Go to Login" and "Cancel" (stays on page).
       ── */}
+      {showLoginPrompt && (
+        <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="login-prompt-box" onClick={e => e.stopPropagation()}>
+            <div className="login-prompt-icon">🔒</div>
+            <h5>Login Required</h5>
+            <p>
+              Please login or register first to borrow items or save to your wishlist.<br />
+              You can also use <strong>Register with Google</strong> for quick access!
+            </p>
+            <div className="d-flex gap-3 justify-content-center">
+              {/* Cancel — just closes the modal, user stays on the page */}
+              <button
+                className="btn btn-outline-secondary rounded-pill px-4"
+                onClick={() => setShowLoginPrompt(false)}
+              >
+                Cancel
+              </button>
+              {/* Login — closes modal and navigates to login page */}
+              <button
+                className="btn btn-primary rounded-pill px-4"
+                onClick={() => { setShowLoginPrompt(false); navigate('/login'); }}
+              >
+                Go to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── FEATURE 4: Borrow Date/Time Modal ── */}
       {showBorrowModal && (
         <div className="borrow-modal-overlay" onClick={closeBorrowModal}>
           {/* stopPropagation prevents click-outside from closing when clicking inside */}
