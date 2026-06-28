@@ -1,9 +1,46 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../Component/Header'
 import logo from '../Images/HeaderFooterMainLogo.png'
 
-const Register = () => {
+// ── Props from App.jsx ──────────────────────────────────────────
+// onLogin: function to call after successful registration
+//          (same as login — registers AND logs them in immediately)
+const Register = ({ onLogin }) => {
+
+  // Form field state
+  const [phone, setPhone] = useState('');
+  const [whatsapp, setWhatsapp] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const navigate = useNavigate();
+
+  // ── Handle phone registration ───────────────────────────────
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+
+    // Simple validation: phone must be 10 digits
+    if (phone.trim().length < 10) {
+      setErrorMsg('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    // Log them in with a name derived from their phone number
+    // (in a real app you'd verify the number with OTP first)
+    const userName = 'User' + phone.slice(-4); // e.g. "User8221"
+    onLogin(userName);
+    navigate('/'); // Redirect to home after registering
+  };
+
+  // ── Simulated Google registration ──────────────────────────
+  // In a real app this would open Google OAuth popup.
+  // Here we just log them in with a placeholder Google name.
+  const handleGoogleRegister = () => {
+    onLogin('GoogleUser');
+    navigate('/');
+  };
+
   return (
     <>
       <style>{`
@@ -54,23 +91,31 @@ const Register = () => {
         .register-specs { height: 45px; width: auto; margin-bottom: 12px; }
         .register-heading { font-size: 1.8rem; color: #fff; margin-bottom: 5px; font-weight: 300; }
         .register-subtext { color: rgba(255,255,255,0.55); font-size: 0.85rem; margin-bottom: 20px; }
+        /* Google button — now clickable and styled clearly as a button */
         .register-google-btn {
-          background: rgba(255,255,255,0.1);
-          border: 1px solid rgba(255,255,255,0.25);
-          color: #fff;
+          background: #fff;
+          border: none;
+          color: #333;
           border-radius: 10px;
-          padding: 10px;
+          padding: 11px;
           width: 100%;
-          font-weight: 600;
+          font-weight: 700;
           font-size: 0.95rem;
-          transition: background 0.3s ease;
+          transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 10px;
           margin-bottom: 18px;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .register-google-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .register-google-btn:hover {
+          background: #f1f5f9;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        }
+        .register-google-btn:active { transform: scale(0.98); }
         .register-divider { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
         .register-divider hr { flex: 1; border-color: rgba(255,255,255,0.2); opacity: 1; }
         .register-divider span { color: rgba(255,255,255,0.5); font-size: 0.85rem; white-space: nowrap; }
@@ -82,6 +127,7 @@ const Register = () => {
           border-radius: 10px !important;
           margin-bottom: 14px;
           padding: 12px 16px;
+          width: 100%;
         }
         .register-input::placeholder { color: rgba(255,255,255,0.35) !important; }
         .register-input:focus { background: rgba(255,255,255,0.15) !important; box-shadow: 0 0 0 2px rgba(99,102,241,0.4) !important; outline: none; }
@@ -100,28 +146,28 @@ const Register = () => {
           color: #fff;
           transition: background 0.3s ease, transform 0.2s ease;
           margin-bottom: 15px;
+          cursor: pointer;
         }
         .register-submit-btn:hover { background-color: #0b5ed7; transform: translateY(-2px); }
         .register-login-link { text-align: center; color: rgba(255,255,255,0.6); font-size: 0.88rem; margin: 0; }
         .register-login-link a { color: #93c5fd; text-decoration: none; font-weight: 600; }
         .register-login-link a:hover { text-decoration: underline; }
-
-        /* ── MOBILE FIXES ── */
+        .register-error {
+          background: rgba(239,68,68,0.15);
+          border: 1px solid rgba(239,68,68,0.4);
+          color: #fca5a5;
+          border-radius: 10px;
+          padding: 10px 14px;
+          font-size: 0.88rem;
+          margin-bottom: 14px;
+        }
         @media (max-width: 768px) {
-          .register-hero-content {
-            flex-direction: column;
-            padding: 30px 20px;
-            min-height: auto;
-          }
-          .register-left-text {
-            padding-right: 0;
-            text-align: center;
-          }
+          .register-hero-content { flex-direction: column; padding: 30px 20px; min-height: auto; }
+          .register-left-text { padding-right: 0; text-align: center; }
           .register-left-text h1 { font-size: 2rem; }
           .register-left-text p { font-size: 1rem; }
           .register-right-form { width: 100%; }
           .register-formcontainer { padding: 25px 20px; }
-          .register-divider span { font-size: 0.75rem; }
         }
       `}</style>
 
@@ -152,12 +198,17 @@ const Register = () => {
               <h1 className="register-heading">Register Now</h1>
               <p className="register-subtext">Use social login for a faster experience</p>
 
-              <button className="register-google-btn">
+              {/* Show error if validation fails */}
+              {errorMsg && <div className="register-error">{errorMsg}</div>}
+
+              {/* ── FEATURE: Google Register button — now wired up ──
+                  Clicking this simulates Google OAuth and logs the user in */}
+              <button className="register-google-btn" onClick={handleGoogleRegister} type="button">
                 <svg width="18" height="18" viewBox="0 0 48 48">
-                  <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/>
-                  <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-                  <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.8 13.6-4.7l-6.3-5.2C29.4 35.6 26.8 36 24 36c-5.3 0-9.6-2.9-11.3-7H6.3C9.7 35.8 16.3 44 24 44z"/>
-                  <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.2-2.3 4.1-4.3 5.4l6.3 5.2C41.4 34.9 44 29.8 44 24c0-1.3-.1-2.7-.4-4z"/>
+                  <path fill="#EA4335" d="M24 9.5c3.2 0 5.9 1.1 8.1 2.9l6-6C34.5 3.1 29.6 1 24 1 14.8 1 7 6.7 3.7 14.6l7 5.4C12.4 13.9 17.7 9.5 24 9.5z"/>
+                  <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.1-4.5 6.7l7 5.4c4-3.8 6.2-9.3 6.2-16.1z"/>
+                  <path fill="#FBBC05" d="M10.7 28.5c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7-5.4C2.3 16.7 1 20.2 1 24s1.3 7.3 3.7 10.5l7-5.4-.1-.6z"/>
+                  <path fill="#34A853" d="M24 47c5.6 0 10.3-1.8 13.7-5l-7-5.4c-1.8 1.2-4.1 2-6.7 2-6.3 0-11.6-4.3-13.3-10.1l-7 5.4C7 41.3 14.8 47 24 47z"/>
                 </svg>
                 Register with Google
               </button>
@@ -168,16 +219,32 @@ const Register = () => {
                 <hr />
               </div>
 
-              <label className="register-label">Phone Number</label>
-              <input type="text" className="form-control register-input" placeholder="+91-00-0000-0000" maxLength="10" />
+              {/* Phone number form */}
+              <form onSubmit={handleSubmit}>
+                <label className="register-label">Phone Number</label>
+                <input
+                  type="tel"
+                  className="form-control register-input"
+                  placeholder="+91-00-0000-0000"
+                  maxLength="10"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} /* digits only */
+                />
 
-              <div className="register-whatsapp-check">
-                <input className="form-check-input" type="checkbox" id="whatsappUpdates" />
-                <label htmlFor="whatsappUpdates">Get Updates on WhatsApp</label>
-                <i className="fa-brands fa-whatsapp"></i>
-              </div>
+                <div className="register-whatsapp-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="whatsappUpdates"
+                    checked={whatsapp}
+                    onChange={e => setWhatsapp(e.target.checked)}
+                  />
+                  <label htmlFor="whatsappUpdates">Get Updates on WhatsApp</label>
+                  <i className="fa-brands fa-whatsapp"></i>
+                </div>
 
-              <button className="register-submit-btn">Create Account</button>
+                <button type="submit" className="register-submit-btn">Create Account</button>
+              </form>
 
               <p className="register-login-link">
                 Already have an account? <Link to="/login">Log In</Link>

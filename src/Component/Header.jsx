@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../CSS/Header.css'
 import logovideo from '../Images/Scene.mp4'
 import loginimg from '../Images/login.png'
@@ -9,6 +9,44 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
   const [isScrolled, setIsScrolled] = useState(window.scrollY > 90);
   const [isTextVisible, setIsTextVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ── AUTH: Read logged-in user from localStorage ─────────────
+  // We read directly here so the Header always shows the latest state,
+  // even when the user logs in from a different page.
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  // useNavigate lets us redirect to /login on logout
+  const navigate = useNavigate();
+
+  // Check localStorage every time the Header renders (or on storage change)
+  useEffect(() => {
+    const readUser = () => {
+      const saved = localStorage.getItem('borrowUser');
+      if (saved) {
+        // Parse the JSON string back into an object { name: "..." }
+        setLoggedInUser(JSON.parse(saved));
+      } else {
+        setLoggedInUser(null);
+      }
+    };
+
+    readUser(); // Run once immediately
+
+    // Also listen for storage changes (e.g. login/logout from another tab or page)
+    window.addEventListener('storage', readUser);
+    return () => window.removeEventListener('storage', readUser);
+  }, []);
+
+  // ── LOGOUT ───────────────────────────────────────────────────
+  // Clears localStorage, resets local state, and refreshes the page
+  // so all components (Home wishlist, etc.) reset too.
+  const handleLogout = () => {
+    localStorage.removeItem('borrowUser');
+    setLoggedInUser(null);
+    // Force a full page reload so App.jsx re-runs its useEffect
+    // and isLoggedIn resets to false everywhere
+    window.location.href = '/';
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,14 +106,50 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
           }
 
           /* ── MOBILE MENU ── */
-          .mobile-menu {
-            display: none;
+          .mobile-menu { display: none; }
+
+          /* ── USER WELCOME PILL in topbar ── */
+          .user-welcome-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            color: #fff;
+            border-radius: 50px;
+            padding: 6px 16px 6px 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(13,110,253,0.3);
           }
+          .user-welcome-pill .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            flex-shrink: 0;
+          }
+          .logout-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #fff;
+            border-radius: 50px;
+            padding: 3px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-left: 4px;
+          }
+          .logout-btn:hover { background: rgba(255,255,255,0.2); }
 
           /* ── TOPBAR MOBILE ── */
           @media (max-width: 768px) {
-
-            /* Top bar */
             .topbar-inner {
               flex-direction: column !important;
               align-items: flex-start !important;
@@ -93,18 +167,8 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               margin: 0 !important;
               padding: 0 !important;
             }
-
-            /* Hide desktop nav links */
-            .desktop-nav-links {
-              display: none !important;
-            }
-
-            /* Show hamburger */
-            .hamburger-btn {
-              display: block;
-            }
-
-            /* Mobile menu open */
+            .desktop-nav-links { display: none !important; }
+            .hamburger-btn { display: block; }
             .mobile-menu {
               display: flex;
               flex-direction: column;
@@ -119,9 +183,7 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               transform: translateX(-100%);
               transition: transform 0.3s ease;
             }
-            .mobile-menu.open {
-              transform: translateX(0);
-            }
+            .mobile-menu.open { transform: translateX(0); }
             .mobile-menu a {
               color: #ffffff !important;
               font-size: 1.1rem;
@@ -146,19 +208,24 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               background: rgba(0,0,0,0.5);
               z-index: 1999;
             }
-
-            /* Hero mobile */
             .hero-container { height: 50vh; }
             .hero-title { font-size: 1.5rem !important; }
             .hero-subtitle { font-size: 1rem !important; }
+            /* Stack user pill on mobile */
+            .user-welcome-pill { font-size: 0.78rem; padding: 4px 10px 4px 8px; }
+            .user-welcome-pill .user-avatar { width: 24px; height: 24px; font-size: 0.75rem; }
           }
         `}
       </style>
 
-      {/* ── TOP BAR ── */}
+      {/* ══════════════════════════════════════════════════════
+          TOP BAR — shows logo video, contact info, and
+          either a Login link OR the user's welcome pill + logout
+      ══════════════════════════════════════════════════════ */}
       <div className="container-fluid navbar navbar-light mb-0 pb-0 bg-white">
         <div className="container-fluid topbar-inner d-flex justify-content-between align-items-center">
 
+          {/* Logo video */}
           <Link to="/" className="navbar-brand p-0">
             <div className="topbar-logo-video" style={{ width: '400px', height: '80px', overflow: 'hidden', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
               <video autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.25)' }}>
@@ -181,11 +248,33 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
                 <span className="insta-id fw-bold"> justborrrowit</span>
               </a>
             </li>
+
+            {/* ── FEATURE: Conditional render based on login state ──
+                If logged in → show welcome pill with user's name + Logout button
+                If not logged in → show the original login image link              */}
             <li className="d-flex align-items-center">
-              <Link className='header-links' to="/login">
-                <img className='login-img' src={loginimg} alt="Login" />
-              </Link>
+              {loggedInUser ? (
+                // ── LOGGED IN: show "Hi, Name" pill + Logout ──
+                <div className="user-welcome-pill">
+                  {/* Avatar circle showing first letter of user's name */}
+                  <div className="user-avatar">
+                    {loggedInUser.name ? loggedInUser.name.charAt(0) : '?'}
+                  </div>
+                  {/* Welcome message with their name */}
+                  <span>Hi, {loggedInUser.name}!</span>
+                  {/* Logout button — clears localStorage and reloads */}
+                  <button className="logout-btn" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                // ── NOT LOGGED IN: show login image icon ──
+                <Link className='header-links' to="/login">
+                  <img className='login-img' src={loginimg} alt="Login" />
+                </Link>
+              )}
             </li>
+
             <li className="d-flex align-items-center">
               <Link className='custom-tooltip-link' data-tooltip="Admin" to="/admin">
                 <i className="fa-solid me-1 ms-4 fa-circle-user"></i>
@@ -200,7 +289,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
       {!hideHero && (
         <div className="hero-wrapper">
 
-          {/* Mobile Overlay */}
           {menuOpen && <div className="mobile-overlay" onClick={() => setMenuOpen(false)} />}
 
           {/* Mobile Slide Menu */}
@@ -213,6 +301,15 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             <Link to="/contactus" onClick={() => setMenuOpen(false)}>Contact Us</Link>
             <Link to="/reviews" onClick={() => setMenuOpen(false)}>Reviews</Link>
             <Link to="/wishlist" onClick={() => setMenuOpen(false)}>WishList ❤️</Link>
+            {/* Show logout in mobile menu too if logged in */}
+            {loggedInUser && (
+              <button
+                onClick={handleLogout}
+                style={{ background: 'none', border: 'none', color: '#f87171', fontWeight: 700, textAlign: 'left', padding: '0 0 12px 0', fontSize: '1.1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
+              >
+                Logout
+              </button>
+            )}
           </div>
 
           {/* Navbar */}
@@ -223,7 +320,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               </Link>
             </div>
 
-            {/* Desktop Links */}
             <ul className='nav-list desktop-nav-links mb-0 d-flex align-items-center'>
               <li><Link className='header-links' to="/">Home</Link></li>
               <li><Link className='header-links' to="/about">About Us</Link></li>
@@ -244,7 +340,6 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               </li>
             </ul>
 
-            {/* Hamburger */}
             <button
               className="hamburger-btn"
               style={{ color: isScrolled ? '#000' : '#fff' }}

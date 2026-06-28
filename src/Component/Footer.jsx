@@ -70,9 +70,9 @@ const Footer = () => {
       </div>
 
       {/* Floating Action Button (Chat) */}
-      <a href="#/" className="chat-btn">
+      {/* <a href="#/" className="chat-btn">
         <i className="fa-solid fa-comment-dots"></i>
-      </a>
+      </a> */}
     </footer>
   )
 }
