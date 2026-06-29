@@ -285,71 +285,72 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
         </div>
       </div>
 
-      {/* ── HERO + NAV WRAPPER ── */}
-      {!hideHero && (
-        <div className="hero-wrapper">
+      {/* ── NAV — always renders on every page ── */}
+      <div className="hero-wrapper">
 
-          {menuOpen && <div className="mobile-overlay" onClick={() => setMenuOpen(false)} />}
+        {menuOpen && <div className="mobile-overlay" onClick={() => setMenuOpen(false)} />}
 
-          {/* Mobile Slide Menu */}
-          <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
-            <button className="mobile-menu-close" onClick={() => setMenuOpen(false)}>✕</button>
-            <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link to="/about" onClick={() => setMenuOpen(false)}>About Us</Link>
-            <Link to="/categories" onClick={() => setMenuOpen(false)}>Categories</Link>
-            <Link to="/howitworks" onClick={() => setMenuOpen(false)}>How It Works</Link>
-            <Link to="/contactus" onClick={() => setMenuOpen(false)}>Contact Us</Link>
-            <Link to="/reviews" onClick={() => setMenuOpen(false)}>Reviews</Link>
-            <Link to="/wishlist" onClick={() => setMenuOpen(false)}>WishList ❤️</Link>
-            {/* Show logout in mobile menu too if logged in */}
-            {loggedInUser && (
-              <button
-                onClick={handleLogout}
-                style={{ background: 'none', border: 'none', color: '#f87171', fontWeight: 700, textAlign: 'left', padding: '0 0 12px 0', fontSize: '1.1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
-              >
-                Logout
-              </button>
-            )}
+        {/* Mobile Slide Menu */}
+        <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+          <button className="mobile-menu-close" onClick={() => setMenuOpen(false)}>✕</button>
+          <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+          <Link to="/about" onClick={() => setMenuOpen(false)}>About Us</Link>
+          <Link to="/categories" onClick={() => setMenuOpen(false)}>Categories</Link>
+          <Link to="/howitworks" onClick={() => setMenuOpen(false)}>How It Works</Link>
+          <Link to="/contactus" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+          <Link to="/reviews" onClick={() => setMenuOpen(false)}>Reviews</Link>
+          <Link to="/wishlist" onClick={() => setMenuOpen(false)}>WishList ❤️</Link>
+          {loggedInUser && (
+            <button
+              onClick={handleLogout}
+              style={{ background: 'none', border: 'none', color: '#f87171', fontWeight: 700, textAlign: 'left', padding: '0 0 12px 0', fontSize: '1.1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
+            >
+              Logout
+            </button>
+          )}
+        </div>
+
+        {/* Navbar — solid+relative when hideHero, transparent/sticky on home */}
+        <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${hideHero ? 'bg-light' : isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}
+          style={ hideHero ? { position: 'relative', boxShadow: '0 2px 10px rgba(0,0,0,0.08)', padding: '10px 20px' } : {} }
+        >
+          <div>
+            <Link to="/">
+              <img className='Navlogo' style={{ height: '60px', width: 'auto', objectFit: 'contain' }} src={HFlogo} alt="NavLogo" />
+            </Link>
           </div>
 
-          {/* Navbar */}
-          <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}>
-            <div>
-              <Link to="/">
-                <img className='Navlogo' style={{ height: '60px', width: 'auto', objectFit: 'contain' }} src={HFlogo} alt="NavLogo" />
+          <ul className='nav-list desktop-nav-links mb-0 d-flex align-items-center'>
+            <li><Link className='header-links' to="/">Home</Link></li>
+            <li><Link className='header-links' to="/about">About Us</Link></li>
+            <li><Link className='header-links' to="/categories">Categories</Link></li>
+            <li>
+              <Link className='header-links custom-tooltip-link' to="/howitworks" data-tooltip="How It Works">
+                <i className="fa-solid fa-gear gear-one"></i>
+                <i className="fa-solid fa-gear gear-two"></i>
               </Link>
-            </div>
+            </li>
+            <li><Link className='header-links' to="/contactus">Contact Us</Link></li>
+            <li><Link className='header-links' to="/reviews">Reviews</Link></li>
+            <li>
+              <Link className='header-links me-5' to="/wishlist">
+                <span style={{ color: '#000' }}>WishList </span>
+                <i className="fa-solid fa-heart" style={{ color: '#e11d48' }}></i>
+              </Link>
+            </li>
+          </ul>
 
-            <ul className='nav-list desktop-nav-links mb-0 d-flex align-items-center'>
-              <li><Link className='header-links' to="/">Home</Link></li>
-              <li><Link className='header-links' to="/about">About Us</Link></li>
-              <li><Link className='header-links' to="/categories">Categories</Link></li>
-              <li>
-                <Link className='header-links custom-tooltip-link' to="/howitworks" data-tooltip="How It Works">
-                  <i className="fa-solid fa-gear gear-one"></i>
-                  <i className="fa-solid fa-gear gear-two"></i>
-                </Link>
-              </li>
-              <li><Link className='header-links' to="/contactus">Contact Us</Link></li>
-              <li><Link className='header-links' to="/reviews">Reviews</Link></li>
-              <li>
-                <Link className='header-links me-5' to="/wishlist">
-                  <span style={{ color: isScrolled ? '#000' : '#fff' }}>WishList </span>
-                  <i className="fa-solid fa-heart"></i>
-                </Link>
-              </li>
-            </ul>
+          <button
+            className="hamburger-btn"
+            style={{ color: '#000' }}
+            onClick={() => setMenuOpen(true)}
+          >
+            ☰
+          </button>
+        </nav>
 
-            <button
-              className="hamburger-btn"
-              style={{ color: isScrolled ? '#000' : '#fff' }}
-              onClick={() => setMenuOpen(true)}
-            >
-              ☰
-            </button>
-          </nav>
-
-          {/* Hero Section */}
+        {/* Hero Section — only on home page */}
+        {!hideHero && (
           <section className="hero-container">
             {imageSrc ? (
               <img src={imageSrc} alt="Hero" className="hero-image" />
@@ -369,9 +370,9 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
               )}
             </div>
           </section>
+        )}
 
-        </div>
-      )}
+      </div>
     </>
   )
 }
