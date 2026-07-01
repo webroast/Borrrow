@@ -311,9 +311,7 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
         </div>
 
         {/* Navbar — solid+relative when hideHero, transparent/sticky on home */}
-        <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${hideHero ? 'bg-light' : isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}
-          style={ hideHero ? { position: 'relative', boxShadow: '0 2px 10px rgba(0,0,0,0.08)', padding: '10px 20px' } : {} }
-        >
+        <nav className={`container-fluid Navbar d-flex justify-content-between align-items-center ${isScrolled ? 'solid-sticky-nav bg-light' : 'transparent-nav'}`}>
           <div>
             <Link to="/">
               <img className='Navlogo' style={{ height: '60px', width: 'auto', objectFit: 'contain' }} src={HFlogo} alt="NavLogo" />
@@ -334,7 +332,7 @@ const Header = ({ videoSrc, imageSrc, heroTitle, heroSubtitle, heroBtnText, hero
             <li><Link className='header-links' to="/reviews">Reviews</Link></li>
             <li>
               <Link className='header-links me-5' to="/wishlist">
-                <span style={{ color: '#000' }}>WishList </span>
+                <span>WishList </span>
                 <i className="fa-solid fa-heart" style={{ color: '#e11d48' }}></i>
               </Link>
             </li>
